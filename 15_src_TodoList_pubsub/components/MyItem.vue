@@ -1,0 +1,75 @@
+<template>
+  <li>
+    <label>
+      <input type="checkbox" :checked="todo.done" @change="handleCheck(todo.id)"/>
+      <!--如下代码也能实现功能,但是不太推荐,因为有点违反原则,因为修改了props-->
+      <!--<input type="checkbox" v-model="todo.done"/>-->
+      <span>{{ todo.title }}</span>
+    </label>
+    <button class="btn btn-danger" @click="handleDelete(todo.id)">删除</button>
+  </li>
+</template>
+
+<script>
+import PubSub from "pubsub-js";
+export default {
+  name: 'MyItem',
+  props: ['todo'],
+  methods: {
+    // 勾选or取消勾选
+    handleCheck(id) {
+      // this.$bus.$emit('checkTodo',id)
+      PubSub.publish('checkTodo',id)
+    },
+    // 删除
+    handleDelete(id) {
+      // if(confirm('你确认删除吗')) this.$bus.$emit('deleteTodo',id)
+      if(confirm('你确认删除吗')) PubSub.publish('deleteTodo',id)
+    }
+  }
+}
+</script>
+
+<style scoped>
+/*item*/
+li {
+  list-style: none;
+  height: 36px;
+  line-height: 36px;
+  padding: 0 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+li:hover {
+  background-color: #ddd;
+}
+li:hover button {
+  display: block;
+}
+
+li label {
+  float: left;
+  cursor: pointer;
+}
+
+li label li input {
+  vertical-align: middle;
+  margin-right: 6px;
+  position: relative;
+  top: -1px;
+}
+
+li button {
+  float: right;
+  display: none;
+  margin-top: 3px;
+}
+
+li:before {
+  content: initial;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+</style>
